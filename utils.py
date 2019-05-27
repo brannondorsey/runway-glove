@@ -20,7 +20,7 @@ class autovivify_list(dict):
                 raise ValueError
 
 def build_word_vector_matrix(vector_file, n_words):
-	'''Read a GloVe array from sys.argv[1] and return its vectors and labels as arrays'''
+	'''Read a GloVe array from file and return its vectors and labels as arrays'''
 	np_arrays = []
 	labels_array = []
 
