@@ -1,10 +1,26 @@
-import sys
-import utils
+import codecs
 import faiss
 import runway
 import numpy as np
 from runway import category, number, text
-from scipy.spatial.distance import cosine
+
+def get_label_dictionaries(labels_array):
+    id_to_word = dict(zip(range(len(labels_array)), labels_array))
+    word_to_id = dict((v,k) for k,v in id_to_word.items())
+    return word_to_id, id_to_word
+
+def build_word_vector_matrix(vector_file, n_words):
+    '''Read a GloVe array from file and return its vectors and labels as arrays'''
+    np_arrays = []
+    labels_array = []
+
+    with codecs.open(vector_file, 'r', 'utf-8') as f:
+        for i, line in enumerate(f):
+            sr = line.split()
+            labels_array.append(sr[0])
+            np_arrays.append(np.array([float(j) for j in sr[1:]]))
+            if i == n_words - 1:
+                return np.array(np_arrays, dtype=np.float32), labels_array
 
 def find_nearest(excluded_words, vec, id_to_word, faiss_index, num_results):
     D, I = faiss_index.search(np.expand_dims(vec, axis=0), num_results + len(excluded_words))
@@ -64,8 +80,8 @@ setup_options = {
 def setup(opts):
     dimensions = int(opts['word_vector_dimensions'])
     vector_file = 'data/glove/glove.6B.{}d.txt'.format(dimensions)
-    df, labels_array = utils.build_word_vector_matrix(vector_file, opts['number_of_words'])
-    word_to_id, id_to_word = utils.get_label_dictionaries(labels_array)
+    df, labels_array = build_word_vector_matrix(vector_file, opts['number_of_words'])
+    word_to_id, id_to_word = get_label_dictionaries(labels_array)
     faiss_index = faiss.IndexFlatL2(dimensions)
     faiss_index.add(df)
     print('is trained: {}'.format(faiss_index.is_trained))
