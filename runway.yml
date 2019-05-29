@@ -2,6 +2,6 @@ python: 3.6
 entrypoint: python runway_model.py
 spec:
   gpu: True
-  cpu: False
+  cpu: True
 build_steps:
   - pip install -r requirements.txt
