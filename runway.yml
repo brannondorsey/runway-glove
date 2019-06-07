@@ -5,5 +5,5 @@ spec:
   gpu: True
   cpu: True
 build_steps:
-  - apt-get install libopenblas-base
+  - apt-get install -y libopenblas-base
   - pip install -r requirements.txt
