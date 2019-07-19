@@ -6,4 +6,5 @@ spec:
   cpu: True
 build_steps:
   - apt-get install -y libopenblas-base libgomp1
+  - ldconfig
   - pip install -r requirements.txt
